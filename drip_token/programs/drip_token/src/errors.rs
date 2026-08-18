@@ -6,7 +6,7 @@
 use anchor_lang::prelude::*;
 
 #[error_code]
-pub enum ErrorCode {
+pub enum ErrorCodes {
     // ─── Pause & Limits ──────────────────────────────────
     #[msg("Faucet is currently paused")]
     FaucetPaused,
