@@ -4,7 +4,7 @@ pub mod claim;
 pub mod update_config;
 pub mod set_vault;
 
-// Re-export them for cleaner access in lib.rs
+// Re-exporting them for cleaner access in lib.rs
 pub use initialize::*;
 pub use claim::*;
 pub use update_config::*;

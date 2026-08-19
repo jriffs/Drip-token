@@ -4,7 +4,7 @@ use crate::state::*;
 use crate::errors::*;
 use crate::constants::*;
 
-pub fn handler(ctx: Context<InitializeConfig>, claim_amount: u64, 
+pub fn initialize_handler(ctx: Context<InitializeConfig>, claim_amount: u64, 
     cooldown_seconds: u64, 
     daily_limit: u64,
     mint: Pubkey, 

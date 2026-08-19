@@ -21,6 +21,6 @@ pub mod drip_token {
         mint: Pubkey,
         mode: u8,
     ) -> Result<()> {
-        handler(ctx, claim_amount, cooldown_seconds, daily_limit, mint, mode)
+        initialize_handler(ctx, claim_amount, cooldown_seconds, daily_limit, mint, mode)
     }
 }
