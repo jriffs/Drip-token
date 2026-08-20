@@ -2,7 +2,6 @@ use anchor_lang::prelude::*;
 use anchor_spl::token::{Token, TokenAccount};
 
 use crate::constants::*;
-use crate::errors::ErrorCodes;
 use crate::state::Config;
 
 pub fn set_vault_handler(ctx: Context<SetVault>) -> Result<()> {
