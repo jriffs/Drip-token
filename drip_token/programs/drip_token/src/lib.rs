@@ -22,7 +22,7 @@ pub mod drip_token {
         mint: Pubkey,
         mode: u8,
     ) -> Result<()> {
-        instructions::initialize::initialize_handler(ctx, claim_amount, cooldown_seconds, daily_limit, mint, mode)
+        initialize::initialize_handler(ctx, claim_amount, cooldown_seconds, daily_limit, mint, mode)
     }
 
     pub fn update_config(
@@ -34,7 +34,7 @@ pub mod drip_token {
         paused: bool,
         new_admin: Pubkey,
     ) -> Result<()> {
-        instructions::update_config::update_config_handler(
+        update_config::update_config_handler(
             ctx,
             claim_amount,
             cooldown_seconds,
@@ -46,14 +46,18 @@ pub mod drip_token {
     }
 
     pub fn set_vault(ctx: Context<SetVault>) -> Result<()> {
-        instructions::set_vault::set_vault_handler(ctx)
+        set_vault::set_vault_handler(ctx)
     }
 
     pub fn claim(ctx: Context<Claim>) -> Result<()> {
-        instructions::claim::claim_handler(ctx)
+        claim::claim_handler(ctx)
     }
 
     pub fn close_user_state(ctx: Context<CloseUserState>) -> Result<()> {
-        instructions::close_user_state::close_user_state_handler(ctx)
+        close_user_state::close_user_state_handler(ctx)
+    }
+
+    pub fn mint_to_vault(ctx: Context<MintToVault>, amount: u64) -> Result<()> {
+        mint_to_vault::mint_to_vault_handler(ctx, amount)
     }
 }

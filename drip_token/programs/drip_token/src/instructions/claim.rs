@@ -51,6 +51,8 @@ pub fn claim_handler(ctx: Context<Claim>) -> Result<()> {
 
         // reset claimed_today
         user_state.claimed_today = new_claimed;
+    } else {
+        user_state.claimed_today = config.claim_amount;
     }
 
     // user state updated before any CPI for security purposes
@@ -128,6 +130,7 @@ pub struct Claim<'info> {
     )]
     pub config: Account<'info, Config>,
 
+    #[account(mut)]
     pub mint: InterfaceAccount<'info, Mint>,
 
     #[account(
