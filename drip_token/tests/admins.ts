@@ -625,7 +625,7 @@ describe("DripToken – All tests", () => {
             provider.connection,
             (provider.wallet as any).payer,
             mint,
-            ctx.admin.publicKey
+            dummyOwner.publicKey
         );
 
 
