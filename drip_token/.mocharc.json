@@ -1,0 +1,5 @@
+{
+  "extension": ["ts"],
+  "require": "ts-mocha",
+  "timeout": 1000000
+}
