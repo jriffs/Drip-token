@@ -8,7 +8,7 @@ pub mod state;
 
 use instructions::*;
 
-declare_id!("9vXiabzy5j6UujwQGb7tPwviA9B1GDBpmKnnsFWu5zSs"); // replace with your real program ID later
+declare_id!("DripoMmxokC5NiTpYb22WzMJmtxE3gzVNNxdpY3WiHFM");
 
 #[program]
 pub mod drip_token {
