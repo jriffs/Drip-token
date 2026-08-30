@@ -1,0 +1,9 @@
+[fuzz.metrics]
+enabled = true
+dashboard = true
+
+
+[[fuzz.programs]]
+address = "9vXiabzy5j6UujwQGb7tPwviA9B1GDBpmKnnsFWu5zSs"
+program = "../target/deploy/drip_token.so"
+ 

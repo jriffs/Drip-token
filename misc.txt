@@ -1,2 +1,28 @@
 export PATH="/home/codespace/.local/share/solana/install/active_release/bin:$PATH"
 export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+
+
+- Download Rust/Cargo
+sudo apt update
+sudo apt upgrade -y
+
+sudo apt install build-essential curl -y
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+
+- Download Solana CLI
+sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
+
+echo 'export PATH="/home/codespace/.local/share/solana/install/active_release/bin:$PATH"' >> ~/.bashrc
+
+-- init wallet and set to devnet
+solana-keygen new
+solana config set --url devnet
+
+-Download avm
+cargo install --git https://github.com/solana-foundation/anchor avm --force
+
+avm install latest
+avm use latest
+anchor --version
