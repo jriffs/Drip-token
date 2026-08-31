@@ -17,7 +17,7 @@ import {
   getMint,
   setAuthority,
   AuthorityType,
-  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
 } from "@solana/spl-token";
 import { getConfigPda } from "../sdk/src/pdas";
 import { getConfig } from "../sdk/src/config";
@@ -49,7 +49,7 @@ async function main() {
     process.exit(1);
   }
 
-  const mintInfo = await getMint(connection, mint, "confirmed", TOKEN_PROGRAM_ID);
+  const mintInfo = await getMint(connection, mint, "confirmed", TOKEN_2022_PROGRAM_ID);
   console.log("Current mint authority:", mintInfo.mintAuthority?.toBase58() ?? "(none)");
 
   if (mintInfo.mintAuthority?.equals(configPda)) {
@@ -77,7 +77,7 @@ async function main() {
     configPda,
     [],
     { commitment: "confirmed" },
-    TOKEN_PROGRAM_ID
+    TOKEN_2022_PROGRAM_ID
   );
 
   console.log("\nMint authority transferred.");

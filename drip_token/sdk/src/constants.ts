@@ -2,7 +2,7 @@ import { PublicKey } from "@solana/web3.js";
 
 /** Default program ID from Anchor.toml (feature-claim / localnet) */
 export const DEFAULT_PROGRAM_ID = new PublicKey(
-  "9vXiabzy5j6UujwQGb7tPwviA9B1GDBpmKnnsFWu5zSs"
+  "DripoMmxokC5NiTpYb22WzMJmtxE3gzVNNxdpY3WiHFM"
 );
 
 /** PDA seeds – must match on-chain constants.rs */

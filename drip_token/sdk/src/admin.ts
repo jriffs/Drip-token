@@ -1,7 +1,7 @@
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { Program, Idl, AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
-  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { getConfigPda, getUserStatePda } from "./pdas";
@@ -100,6 +100,7 @@ export async function updateConfig(
 export async function setVault(
   provider: AnchorProvider,
   program: Program<Idl>,
+  mint: PublicKey,
   vault: PublicKey,
   programId: PublicKey = DEFAULT_PROGRAM_ID
 ): Promise<string> {
@@ -111,12 +112,14 @@ export async function setVault(
       .setVault()
       .accounts({
         config: configPda,
+        mint,
         admin,
         vault,
-        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
       })
       .rpc();
   } catch (err) {
+    console.log(err);
     throwMapped(err);
   }
 }
@@ -146,7 +149,7 @@ export async function mintToVault(
         mint: params.mint,
         vault: params.vault,
         systemProgram: SystemProgram.programId,
-        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       })
       .rpc();
