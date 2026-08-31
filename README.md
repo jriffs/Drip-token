@@ -311,45 +311,104 @@ Helper utilities live under `tests/utils/` (`setup.ts`, `time.ts`, `accounts.ts`
 
 ## Deployment
 
-Progression: **localnet → devnet → mainnet**.
+**Current scope: localnet → devnet only.**  
+Mainnet is intentionally out of scope for the foreseeable future.
 
-### Preferred mainnet authority strategy
+### Upgrade authority (devnet)
 
-Make the program **immutable after final audit** (renounce upgrade authority).  
-Controlled multisig upgrade authority is the only recommended alternative if future upgrades are explicitly required.
+- Keep a single controlled upgrade authority key while iterating on devnet.
+- Record the key location and the Program ID after every deploy.
+- If the program is later promoted, the preferred production posture is to renounce upgrade authority (immutable) or move it to a multisig. That decision is deferred.
 
-### Typical flow
+### Operational scripts
+
+All day-to-day commands live under `scripts/`.  
+See `scripts/README.md` for the full reference. Summary:
+
+| Script | Purpose |
+|--------|---------|
+| `./scripts/build.sh` | Clean `anchor build` |
+| `./scripts/deploy-devnet.sh` | Deploy / upgrade to devnet |
+| `ts-node scripts/initialize.ts …` | Create Config PDA |
+| `ts-node scripts/setup-mint-mode.ts …` | Transfer mint authority → Config PDA |
+| `ts-node scripts/setup-transfer-mode.ts …` | Create vault + `set_vault` (+ optional fund) |
+| `ts-node scripts/health-check.ts` | Print Config (+ optional UserState) |
+| `ts-node scripts/update-config.ts …` | Change claim amount / limits / mode / admin / pause |
+| `ts-node scripts/pause.ts` / `--unpause` | Convenience pause helpers |
+| `ts-node scripts/claim.ts` | Smoke-test claim |
+
+Environment overrides: `CLUSTER`, `RPC_URL`, `PROGRAM_ID`, `ANCHOR_WALLET`.
+
+### First-time devnet checklist
 
 ```bash
+# 0. Prerequisites
+#    - Funded wallet on devnet
+#    - yarn install && anchor build
+
 # 1. Build
-anchor build
+./scripts/build.sh
 
-# 2. Deploy (example – adjust cluster and keypair)
-anchor deploy --provider.cluster devnet
+# 2. Deploy
+./scripts/deploy-devnet.sh
+#    → note the Program ID printed by Anchor
+#    → optionally update sdk/src/constants.ts and Anchor.toml [programs.devnet]
 
-# 3. Initialize Config (admin signs)
-#    Use the TypeScript admin helper or an Anchor script.
-#    Supply: admin, mint, claim_amount, cooldown_seconds, daily_limit, mode, paused
+# 3. Create (or reuse) an SPL mint
+spl-token create-token --decimals 6 --url devnet
+#    → MINT=<address>
 
-# 4a. Mint mode – set mint authority to the Config PDA
-spl-token authorize <MINT> mint <CONFIG_PDA> --url devnet
+# 4. Initialize Config (admin = current wallet)
+ts-node scripts/initialize.ts \
+  --mint $MINT \
+  --claim-amount 1000000 \
+  --cooldown 60 \
+  --daily-limit 5000000 \
+  --mode 0          # 0 = Mint, 1 = Transfer
 
-# 4b. Transfer mode – create vault owned by Config PDA and fund it
-#     (or use mint_to_vault after the vault exists and is set via set_vault)
+# 5a. Mint mode – give Config PDA mint authority
+ts-node scripts/setup-mint-mode.ts --mint $MINT
 
-# 5. Verify on-chain Config
-#    getConfig() from the TypeScript SDK
+# 5b. Transfer mode alternative
+# ts-node scripts/setup-transfer-mode.ts --mint $MINT --fund 100000000
 
-# 6. Test claim
+# 6. Verify
+ts-node scripts/health-check.ts
+
+# 7. Smoke-test claim
+ts-node scripts/claim.ts
 ```
 
-Operational notes:
-- Pause: call `update_config` with `paused = true`.
-- Parameter changes: always via `update_config`.
-- Vault management (Transfer mode): monitor balance; re-fund as needed (no automated refill in v1).
-- Loss of the admin key means loss of control over config and the pause switch – secure it accordingly.
+### Day-to-day operations
 
-Exact CLI examples and scripts should live under a `scripts/` folder or be expanded as deployment proceeds.
+- **Pause / unpause**  
+  `ts-node scripts/pause.ts` or `ts-node scripts/pause.ts --unpause`  
+  (or call `update-config.ts` with the desired `paused` value)
+
+- **Change parameters** (claim amount, cooldown, daily limit, mode, admin)  
+  Always via `update_config` – use `scripts/update-config.ts`.  
+  The mint is immutable after `initialize`.
+
+- **Vault management (Transfer mode)**  
+  Monitor vault balance. Re-fund with a normal token transfer or with  
+  `mint_to_vault` (admin-only, Config PDA must be mint authority).  
+  No automated refill in v1.
+
+- **Key management**  
+  Loss of the admin key means loss of ability to pause or change config.  
+  Keep the admin key secure even on devnet.
+
+### Anchor.toml notes
+
+After the first successful devnet deploy, add:
+
+```toml
+[programs.devnet]
+drip_token = "<PROGRAM_ID_FROM_DEPLOY>"
+```
+
+Keep `[programs.localnet]` for local testing.  
+The SDK defaults to the localnet Program ID; override with `PROGRAM_ID` env var or by updating `sdk/src/constants.ts` when working against devnet.
 
 ---
 

@@ -135,9 +135,9 @@ pub struct Claim<'info> {
 
     #[account(
         mut,
-        token::authority = config, 
-        token::mint = mint,
-        token::token_program = token_program,
+        associated_token::mint = mint,
+        associated_token::authority = config,
+        associated_token::token_program = token_program
     )]
     pub vault: InterfaceAccount<'info, TokenAccount>,
 

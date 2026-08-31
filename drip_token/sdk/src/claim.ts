@@ -2,7 +2,7 @@ import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { Program, Idl, AnchorProvider } from "@coral-xyz/anchor";
 import {
   getAssociatedTokenAddressSync,
-  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { getConfigPda, getUserStatePda } from "./pdas";
@@ -31,7 +31,7 @@ export async function claim(
 
   const config = await getConfig(provider.connection, program, programId);
 
-  const userAta = getAssociatedTokenAddressSync(config.mint, user, false);
+  const userAta = getAssociatedTokenAddressSync(config.mint, user, false, TOKEN_2022_PROGRAM_ID);
 
   try {
     const txSig = await program.methods
@@ -44,7 +44,7 @@ export async function claim(
         userState: userStatePda,
         userTokenAccount: userAta,
         systemProgram: SystemProgram.programId,
-        tokenProgram: TOKEN_PROGRAM_ID,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       })
       .rpc();
