@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Token, TokenAccount};
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface,};
 
 use crate::constants::*;
 use crate::state::Config;
@@ -26,13 +26,16 @@ pub struct SetVault<'info> {
 
     pub admin: Signer<'info>,
 
+    pub mint: InterfaceAccount<'info, Mint>,
+
     /// New vault token account.
     /// Must be for the configured mint and owned by the Config PDA.
     #[account(
-        token::mint = config.mint,
-        token::authority = config
+        associated_token::mint = mint,
+        associated_token::authority = config,
+        associated_token::token_program = token_program
     )]
-    pub vault: Account<'info, TokenAccount>,
+    pub vault: InterfaceAccount<'info, TokenAccount>,
 
-    pub token_program: Program<'info, Token>,
+    pub token_program: Interface<'info, TokenInterface>,
 }

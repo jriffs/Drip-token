@@ -18,7 +18,7 @@ import { PublicKey } from "@solana/web3.js";
 import {
   getAssociatedTokenAddressSync,
   createAssociatedTokenAccountIdempotent,
-  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { setVault, mintToVault } from "../sdk/src/admin";
@@ -52,7 +52,8 @@ async function main() {
   const vaultAta = getAssociatedTokenAddressSync(
     mint,
     configPda,
-    true // allowOwnerOffCurve – PDA
+    true, // allowOwnerOffCurve – PDA
+    TOKEN_2022_PROGRAM_ID
   );
 
   console.log("Ensuring vault ATA exists…");
@@ -64,14 +65,14 @@ async function main() {
     mint,
     configPda,
     { commitment: "confirmed" },
-    TOKEN_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID,
     ASSOCIATED_TOKEN_PROGRAM_ID,
     true // allowOwnerOffCurve
   );
 
   // 2. set_vault
   console.log("Calling set_vault…");
-  const setSig = await setVault(provider, program, vaultAta, programId);
+  const setSig = await setVault(provider, program, mint, vaultAta, programId);
   console.log("  set_vault signature:", setSig);
 
   // 3. Optional funding via mint_to_vault
